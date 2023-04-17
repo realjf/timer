@@ -1,28 +1,21 @@
+#include <iostream>
+#include <chrono>
+#include <thread>
+
 #include "timer.h"
 
 int main() {
-    CTimer::Timer<CTimer::AbsoluteTimerNodePtr, CTimer::AbsoluteTimerNodeList, CTimer::AbsoluteClock> timer;
+    CTimer::Timer timer;
     timer.Start();
-    std::vector<CTimer::TimerId> timerIds;
-
-    // 添加一万个定时器
-    for (int i = 0; i < 10; ++i) {
-        auto timerId = timer.AddTimer(std::chrono::milliseconds(i * 1000), [](CTimer::TimerId id) {
-            std::cout << "timer " << id << " callback" << std::endl;
+    for (int i = 0; i < 10000; ++i) {
+        auto randMs = std::chrono::milliseconds(rand() % 86400000);
+        int64_t expire_time = CTimer::Now() + randMs.count();
+        CTimer::TimerTask task(expire_time, [i]() {
+            std::cout << "Task " << i << " executed" << std::endl;
         });
-
-        timerIds.push_back(timerId);
+        timer.AddTimer(task);
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-
-    // for (auto timerId : timerIds) {
-    //     timer.RemoveTimer(timerId);
-    // }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(15000));
-
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     timer.Stop();
-
     return 0;
 }
