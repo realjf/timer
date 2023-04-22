@@ -36,5 +36,6 @@
 /bin
 /bin_test
 /build_test
+/build_deps
 /lib
 /core

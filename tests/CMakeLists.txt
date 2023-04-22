@@ -13,6 +13,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin_test)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../lib)
 
 include_directories(${CMAKE_SOURCE_DIR}/../src)
+include_directories(${CMAKE_SOURCE_DIR}/../deps/gtest/googletest/include)
+include_directories(${CMAKE_SOURCE_DIR}/../deps/gtest/googlemock/include)
 
 set(CTIMER_SRS ../src/timer.cpp ../src/timer_heap.cpp)
 set(CTIMER_HEADERS ../src/timer.h ../src/timer_task.h ../src/timer_wheel.h ../src/timer_heap.h ../src/spinlock.h ../src/log.h)
@@ -34,6 +36,6 @@ endif()
 
 add_executable(${PROJECT_NAME}_test main.cpp ${CTIMER_SRS} ${CTIMER_HEADERS})
 target_link_directories(${PROJECT_NAME}_test PUBLIC ${LIBRARY_OUTPUT_PATH})
-target_link_libraries(${PROJECT_NAME}_test ctimer pthread)
+target_link_libraries(${PROJECT_NAME}_test ctimer mock gtest gtest_main mock_main)
 
 # add_executable(spinlock_test spinlock_test.cpp ../src/spinlock.h)
