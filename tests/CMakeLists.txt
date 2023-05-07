@@ -6,18 +6,21 @@ project(${PROJECT_NAME} VERSION ${CTIMER_VERSION} LANGUAGES C CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-format -O3")
 
+set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/..)
+
 # set executable output path
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin_test)
 
 # set library output path
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../lib)
 
-include_directories(${CMAKE_SOURCE_DIR}/../src)
-include_directories(${CMAKE_SOURCE_DIR}/../deps/gtest/googletest/include)
-include_directories(${CMAKE_SOURCE_DIR}/../deps/gtest/googlemock/include)
+include_directories(.)
+include_directories(../src)
+include_directories(../deps/gtest/googletest/include)
+include_directories(../deps/gtest/googlemock/include)
 
-set(CTIMER_SRS ../src/timer.cpp ../src/timer_heap.cpp)
-set(CTIMER_HEADERS ../src/timer.h ../src/timer_task.h ../src/timer_wheel.h ../src/timer_heap.h ../src/spinlock.h ../src/log.h)
+set(CTIMER_SRS ../timer.cpp)
+set(CTIMER_HEADERS ../src/timer_base.h ../src/min_heap.h ../src/spinlock.h ../src/timer.h ../src/timer_task.h ../src/timer_wheel.h ../src/timer_heap.h ../src/spinlock.h ../src/log.h)
 
 # set library output path
 # set(LIBRARY_OUTPUT_DIRECTORY lib)
@@ -34,8 +37,10 @@ elseif(BUILD_SHARED_LIBS AND WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".dll")
 endif()
 
-add_executable(${PROJECT_NAME}_test main.cpp ${CTIMER_SRS} ${CTIMER_HEADERS})
-target_link_directories(${PROJECT_NAME}_test PUBLIC ${LIBRARY_OUTPUT_PATH})
-target_link_libraries(${PROJECT_NAME}_test ctimer mock gtest gtest_main mock_main)
+enable_testing()
 
-# add_executable(spinlock_test spinlock_test.cpp ../src/spinlock.h)
+# add_subdirectory(spinlock)
+
+add_subdirectory(timertask)
+# add_subdirectory(timerheap)
+# add_subdirectory(timerwheel)

@@ -5,16 +5,17 @@ SpinLock lock;
 int count = 0;
 
 void increase_count() {
-    lock.lock();
+    // lock.lock();
+    std::lock_guard<SpinLock> l(lock);
     ++count;
     std::cout << "Thread " << std::this_thread::get_id() << " increased count to " << count << std::endl;
-    lock.unlock();
+    // lock.unlock();
 }
 
 int main() {
     std::thread t1(increase_count);
     std::thread t2(increase_count);
-    std::thread t3(increase_count);
+    std::thread t3(increase_count); 
     std::thread t4(increase_count);
     std::thread t5(increase_count);
 

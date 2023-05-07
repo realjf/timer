@@ -7,8 +7,8 @@ project(${PROJECT_NAME} VERSION ${CTIMER_VERSION} LANGUAGES C CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas -Wno-format -O3")
 
-set(CTIMER_SRS ../src/timer.cpp ../src/timer_heap.cpp)
-set(CTIMER_HEADERS ../src/timer.h ../src/timer_task.h ../src/timer_wheel.h ../src/timer_heap.h ../src/spinlock.h ../src/log.h)
+set(CTIMER_SRS timer.cpp)
+set(CTIMER_HEADERS ../src/timer_base.h ../src/min_heap.h ../src/spinlock.h ../src/timer.h ../src/timer_task.h ../src/timer_wheel.h ../src/timer_heap.h ../src/spinlock.h ../src/log.h)
 
 # set library output path
 # set(LIBRARY_OUTPUT_DIRECTORY lib)

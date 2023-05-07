@@ -4,6 +4,7 @@
 #include <atomic>
 #include <thread>
 #include <stdexcept>
+#include <mutex>
 
 class SpinLock {
 public:
