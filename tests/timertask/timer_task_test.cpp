@@ -3,7 +3,7 @@
 
 TEST(testComp, testComp1) {
     auto task = CTimer::TimerTask();
-    std::cout << "expire_time: " << task.ExpireTime() << std::endl;
+    std::cout << "expire_time: " << CTimer::TimeStampF(task.ExpireTime()) << std::endl;
     std::cout << "interval: " << task.Interval() << std::endl;
 
     task.Run();

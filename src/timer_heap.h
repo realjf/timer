@@ -53,7 +53,6 @@ namespace CTimer {
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto it = tasks_.begin(); it != tasks_.end(); ++it) {
             if (*it == task) {
-                delete it;
                 tasks_.erase(it);
                 break;
             }
@@ -91,7 +90,7 @@ namespace CTimer {
     void TimerHeap<T>::SiftUp(int index) {
         while (index > 0) {
             int parent = (index - 1) / 2;
-            if (*tasks_[index] < *tasks_[parent]) {
+            if (tasks_[index] < tasks_[parent]) {
                 std::swap(tasks_[index], tasks_[parent]);
                 index = parent;
             } else {
@@ -106,10 +105,10 @@ namespace CTimer {
             int left = index * 2 + 1;
             size_t right = static_cast<size_t>(index * 2 + 2);
             int min_child = left;
-            if (right < tasks_.size() && *tasks_[right] < *tasks_[left]) {
+            if (right < tasks_.size() && tasks_[right] < tasks_[left]) {
                 min_child = right;
             }
-            if (*tasks_[index] > *tasks_[min_child]) {
+            if (tasks_[index] > tasks_[min_child]) {
                 std::swap(tasks_[index], tasks_[min_child]);
                 index = min_child;
             } else {
