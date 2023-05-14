@@ -12,10 +12,12 @@ TEST(testComp, testComp1) {
         if (i == 5) {
             tw.RemoveTimer(task);
         }
-        std::cout << i << std::endl;
     }
 
-    tw.Tick();
+    for (int i = 0; i < 10000; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        tw.Tick();
+    }
 
     std::cout << "earliest: " << CTimer::TimeStampF(tw.GetEarliestTime()) << std::endl;
 

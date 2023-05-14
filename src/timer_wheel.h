@@ -94,23 +94,21 @@ namespace CTimer {
     void TimerWheel<T>::Tick() {
         std::vector<T> tasks;
         // 取出当前槽位中的队列
-        auto queue = slots_[curTick_];
-        while (!queue->empty()) {
-            auto task = queue->top();
+        auto heap = slots_[curTick_];
+        while (!heap->empty()) {
+            auto task = heap->top();
             if (task.ExpireTime() <= Now()) {
                 tasks.push_back(task);
-                queue->pop();
+                heap->pop();
             }
-        }
-        // 从当前时间轮中删除到期任务
-        for (auto task : tasks) {
-            RemoveTimer(task);
         }
 
         // 处理到期任务
         for (auto task : tasks) {
             task.Run();
-            AddTimer(task);
+            if (task.Interval() > 0) {
+                AddTimer(task);
+            }
         }
 
         // 更新时间轮的 tick 值
