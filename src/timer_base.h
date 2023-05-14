@@ -122,6 +122,14 @@ namespace CTimer {
             return *(cb_.target<void()>()) == *(other.cb_.target<void()>()) && interval_ == other.interval_ && expire_time_ < other.expire_time_;
         }
 
+        bool operator>=(const TimerBase &other) const {
+            return *(cb_.target<void()>()) == *(other.cb_.target<void()>()) && interval_ == other.interval_ && expire_time_ >= other.expire_time_;
+        }
+
+        bool operator<=(const TimerBase &other) const {
+            return *(cb_.target<void()>()) == *(other.cb_.target<void()>()) && interval_ == other.interval_ && expire_time_ <= other.expire_time_;
+        }
+
     protected:
         Callback cb_;        // 回调函数
         Tick_t interval_;    // 任务执行间隔

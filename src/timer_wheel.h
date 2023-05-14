@@ -4,7 +4,8 @@
 #include <vector>
 #include <queue>
 
-#include "timer_heap.h"
+#include "timer_task.h"
+#include "min_heap.h"
 
 namespace CTimer {
 
@@ -32,17 +33,17 @@ namespace CTimer {
 
         int GetShiftBits() const;
         int GetWheelMask() const;
-        std::vector<std::queue<T>> GetSlots() const;
+        std::vector<MinHeap<T>> GetSlots() const;
 
     private:
         // 获取定时任务在时间轮中的位置
         int GetSlotIndex(Tick_t expire_time) const;
 
     private:
-        int shiftBits_;                   // 时间轮每个槽位所占二进制位数
-        int wheelMask_;                   // 时间轮大小掩码（用于取模运算）
-        Tick_t curTick_;                  // 当前时间轮所在位置的 tick 值
-        std::vector<TimerHeap<T>> slots_; // 每个槽位对应的定时器队列
+        int shiftBits_;                 // 时间轮每个槽位所占二进制位数
+        int wheelMask_;                 // 时间轮大小掩码（用于取模运算）
+        Tick_t curTick_;                // 当前时间轮所在位置的 tick 值
+        std::vector<MinHeap<T>> slots_; // 每个槽位对应的定时器队列
     };
 
     template <typename T>
@@ -77,13 +78,7 @@ namespace CTimer {
         // 从当前槽位中删除
         auto &slot_tasks = slots_[slotIndex];
 
-        for (auto it = slot_tasks.GetBegin(); it != slot_tasks.GetEnd();) {
-            if (*it == task) {
-                slot_tasks.erase(it);
-            } else {
-                ++it;
-            }
-        }
+        slot_tasks.remove(task);
     }
 
     template <typename T>
@@ -91,16 +86,16 @@ namespace CTimer {
         if (slots_[curTick_].empty()) {
             return kInvalidTime;
         }
-        return slots_[curTick_].front().ExpireTime();
+        return slots_[curTick_].top().ExpireTime();
     }
 
     template <typename T>
     void TimerWheel<T>::Tick() {
         std::vector<T> tasks;
         // 取出当前槽位中的队列
-        std::queue<T> &queue = slots_[curTick_];
+        MinHeap<T> &queue = slots_[curTick_];
         while (!queue.empty()) {
-            auto task = queue.front();
+            auto task = queue.top();
             if (task.ExpireTime() <= Now()) {
                 tasks.push_back(task);
                 queue.pop();
@@ -132,7 +127,7 @@ namespace CTimer {
     }
 
     template <typename T>
-    std::vector<std::queue<T>> TimerWheel<T>::GetSlots() const {
+    std::vector<MinHeap<T>> TimerWheel<T>::GetSlots() const {
         return slots_;
     }
 
@@ -146,10 +141,8 @@ namespace CTimer {
         std::vector<T> tasks;
         int slotIndex = GetSlotIndex(expire_time);
         auto &slot_tasks = slots_[slotIndex];
-        for (auto it = slot_tasks.GetBegin(); it != slot_tasks.GetEnd();) {
-            tasks.push_back(*it);
-            slot_tasks.erase(it);
-        }
+
+        slot_tasks.traverse([&](auto a) { tasks.push_back(a);slot_tasks.remove(a); });
         return tasks;
     }
 
