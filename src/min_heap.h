@@ -17,6 +17,10 @@ namespace CTimer {
     template <typename T>
     class MinHeap {
     public:
+        MinHeap<T>() = default;
+
+        MinHeap(MinHeap<T> &&) = default;
+
         // 添加元素
         void push(const T &val) {
             std::lock_guard<SpinLock> lock(mutex_);
