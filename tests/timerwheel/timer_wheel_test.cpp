@@ -14,14 +14,13 @@ TEST(testComp, testComp1) {
         }
     }
 
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 100; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::cout << "tick!" << std::endl;
         tw.Tick();
     }
 
     std::cout << "earliest: " << CTimer::TimeStampF(tw.GetEarliestTime()) << std::endl;
-
-    std::this_thread::sleep_for(std::chrono::seconds(10));
 
     for (auto task : tw.GetExpiredTimers(CTimer::Now())) {
         auto t1 = task.ExpireTime();

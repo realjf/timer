@@ -29,6 +29,19 @@ namespace CTimer {
             }
         }
 
+        Timer() : tickInterval_(kMinInterval),
+                  heap_(),
+                  quit_(false) {
+            wheelSizes_ = std::vector<int>({8, 6, 6, 6, 6});
+            // 计算每个时间轮需要占据的二进制位数，并根据 wheelSizes 创建多个时间轮
+            int shiftBits = 0;
+            for (int i = 0; i < wheelSizes_.size(); i++) {
+                shifts_.push_back(shiftBits);
+                shiftBits += log2(wheelSizes_[i]);
+                wheels_.push_back(TimerWheel<T>(shiftBits, wheelSizes_[i]));
+            }
+        }
+
         // 启动定时器线程
         void Start();
 
@@ -74,7 +87,7 @@ namespace CTimer {
         Tick_t now = Now();
         std::lock_guard<std::mutex> lock(mutex_);
         if (expire_time <= 0) {
-            task.Callback();
+            task.GetCallback();
         }
         // 将定时器按照时间粒度拆分成不同的层级
         for (int i = 0; i < wheelSizes_.size(); i++) {
